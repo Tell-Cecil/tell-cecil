@@ -9,7 +9,13 @@
   },
   "homepage": "https://github.com/Tell-Cecil/tell-cecil#readme",
   "bugs": "https://github.com/Tell-Cecil/tell-cecil/issues",
-  "keywords": ["feedback", "widget", "bug-report", "github-issues", "element-picker"],
+  "keywords": [
+    "feedback",
+    "widget",
+    "bug-report",
+    "github-issues",
+    "element-picker"
+  ],
   "type": "module",
   "exports": {
     ".": {
@@ -29,7 +35,9 @@
   "bin": {
     "tell-cecil": "dist/server.mjs"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "vite build && vite build --config vite.relay.config.ts && tsc -p tsconfig.build.json",
     "dev": "vite",
@@ -40,7 +48,7 @@
     "prepublishOnly": "npm run typecheck && npm test && npm run build && node scripts/check-size.mjs"
   },
   "devDependencies": {
-    "@types/node": "^20.19.43",
+    "@types/node": "^22.20.5",
     "jsdom": "^26.0.0",
     "tsx": "^4.23.15",
     "typescript": "^5.6.0",
