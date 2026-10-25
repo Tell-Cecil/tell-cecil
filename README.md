@@ -1,5 +1,7 @@
 # Tell Cecil
 
+[![npm](https://img.shields.io/npm/v/tell-cecil)](https://www.npmjs.com/package/tell-cecil)
+
 Embeddable feedback widget. Visitors click a button, pick an element on the page, describe the problem, and Tell Cecil files it in your tracker with the selector, accessible name and page context. MIT licensed, no dependencies, about 8 KB gzipped.
 
 > **Alpha.** Works with GitHub. Expect changes.
