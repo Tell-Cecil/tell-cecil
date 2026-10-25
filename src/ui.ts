@@ -99,7 +99,7 @@ const HTML = `
 <div class="dock">
 <div class="toast" hidden><span class="ok">✓</span><span class="msg">Feedback sent — thank you</span><a target="_blank" rel="noopener" hidden>View issue</a></div>
 <button class="fab" type="button" aria-expanded="false" aria-label="Open feedback">
-  <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.2C3 4.4 4.4 3 6.2 3h5.6C13.6 3 15 4.4 15 6.2v3.1c0 1.8-1.4 3.2-3.2 3.2H8.4L5.2 15v-2.7A3.2 3.2 0 0 1 3 9.3z"/></svg>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="12" r="7.4" fill="currentColor" stroke="none"/><circle cx="11.5" cy="10" r="1.15" fill="#21242b" stroke="none"/><path d="M10.5 14h3.5a1.75 1.75 0 0 1-3.5 0z" fill="#21242b" stroke="#21242b" stroke-width="1.2"/><path d="M18.7 10a3 3 0 0 1 0 4"/><path d="M21.7 9a6 6 0 0 1 0 6"/></svg>
   <span>Feedback</span>
 </button>
 </div>

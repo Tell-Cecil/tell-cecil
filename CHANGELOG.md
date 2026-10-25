@@ -4,12 +4,23 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Changed
+- New Feedback button icon: a speaking face, matching the project logo.
+
 ## [0.0.1] - 2026-10-25
 
 First npm release.
 
 ### Added
 - Published as `tell-cecil`: the widget (`import { init } from "tell-cecil"`, or `dist/cecil.js` from a CDN), the relay (`tell-cecil/relay`), and the Node runner as `npx tell-cecil`, which also reads a `.env` file from the current folder.
+- The relay caps the request body while streaming it (413 without needing content-length) and gives up on GitHub after 10 seconds (504).
+- `exposeIssueUrl` project option, `clientIp` and `rateLimit.projectMax` relay options, `retry-after` on 429.
+- Startup validation of relay configuration (origins, repo, token, projects).
+- Relative endpoints, a 15 second request timeout and console hints for failures (for example 403).
+- Ctrl/Cmd+Enter sends; focus returns to the button on close; the toast is no longer a live region.
+- Richer element descriptions: implicit roles, wrapping labels, longer selectors until unique.
+- Demo page, Dockerfile, Cloudflare Worker example, GitHub Actions CI, built relay (`dist/relay.mjs`, `dist/server.mjs`) and type declarations.
+- Tests for the UI flows, picker, relay, GitHub formatting, SSR import and script-tag configuration.
 
 ### Security
 - The page title is no longer sent. The relay still accepts a `title` from older widgets and ignores it.
@@ -20,16 +31,6 @@ First npm release.
 - The relay neutralises `@mentions` and issue references in the comment (other fields render as code), blockquotes the comment and escapes its raw HTML, validates the report URL origin, and uses server time for the timestamp.
 - The relay rate limits by the proxy-added client IP, not a spoofable header, and adds a per-project cap. Memory use of the limiter is bounded.
 - The Node runner ignores client-supplied `x-forwarded-for` and `cf-connecting-ip` unless `CECIL_TRUST_PROXY=1`.
-
-### Added
-- The relay caps the request body while streaming it (413 without needing content-length) and gives up on GitHub after 10 seconds (504).
-- `exposeIssueUrl` project option, `clientIp` and `rateLimit.projectMax` relay options, `retry-after` on 429.
-- Startup validation of relay configuration (origins, repo, token, projects).
-- Relative endpoints, a 15 second request timeout and console hints for failures (for example 403).
-- Ctrl/Cmd+Enter sends; focus returns to the button on close; the toast is no longer a live region.
-- Richer element descriptions: implicit roles, wrapping labels, longer selectors until unique.
-- Demo page, Dockerfile, Cloudflare Worker example, GitHub Actions CI, built relay (`dist/relay.mjs`, `dist/server.mjs`) and type declarations.
-- Tests for the UI flows, picker, relay, GitHub formatting, SSR import and script-tag configuration.
 
 ### Changed
 - The 403 console hint names the relay's origin allowlist instead of a runner-specific variable.
