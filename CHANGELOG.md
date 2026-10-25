@@ -4,8 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.0.2] - 2026-10-25
+
 ### Changed
 - New Feedback button icon: a speaking face, matching the project logo.
+
+### Added
+- Releases are published to npm from GitHub Actions with provenance.
 
 ## [0.0.1] - 2026-10-25
 
