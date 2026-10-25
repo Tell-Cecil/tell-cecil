@@ -1,0 +1,53 @@
+{
+  "name": "tell-cecil",
+  "version": "0.0.1",
+  "description": "Embeddable feedback widget that files issues in GitHub.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tell-Cecil/tell-cecil.git"
+  },
+  "homepage": "https://github.com/Tell-Cecil/tell-cecil#readme",
+  "bugs": "https://github.com/Tell-Cecil/tell-cecil/issues",
+  "keywords": ["feedback", "widget", "bug-report", "github-issues", "element-picker"],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/cecil.mjs"
+    },
+    "./relay": {
+      "types": "./dist/types/relay.d.ts",
+      "import": "./dist/relay.mjs"
+    },
+    "./cecil.js": "./dist/cecil.js",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/types/index.d.ts",
+  "jsdelivr": "dist/cecil.js",
+  "unpkg": "dist/cecil.js",
+  "bin": {
+    "tell-cecil": "dist/server.mjs"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "vite build && vite build --config vite.relay.config.ts && tsc -p tsconfig.build.json",
+    "dev": "vite",
+    "relay": "tsx src/server.ts",
+    "start": "node dist/server.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build && node scripts/check-size.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "jsdom": "^26.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

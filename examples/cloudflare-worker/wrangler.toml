@@ -1,0 +1,11 @@
+name = "tell-cecil-relay"
+main = "worker.ts"
+compatibility_date = "2026-10-01"
+
+[vars]
+CECIL_GITHUB_REPO = "owner/repo"
+CECIL_PROJECT_KEY = "pk_abc"
+CECIL_ORIGINS = "https://yoursite.com"
+
+# The token is a secret, not a var:
+#   npx wrangler secret put CECIL_GITHUB_TOKEN

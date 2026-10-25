@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tell Cecil demo</title>
+  <style>
+    body{font-family:system-ui,sans-serif;max-width:640px;margin:32px auto;padding:0 16px;line-height:1.5}
+    section{margin:0 0 24px;padding:16px;border:1px solid #d9dde3;border-radius:8px}
+    [contenteditable]{min-height:3em;padding:8px;border:1px dashed #98a0ac}
+    .private{background:#fff4f4}
+  </style>
+</head>
+<body>
+  <h1>Tell Cecil demo</h1>
+  <p>Run <code>npm run relay</code> (see README) and <code>npm run dev</code>, then click Feedback. Try picking each block below.</p>
+
+  <section>
+    <h2>Buttons</h2>
+    <button type="button" data-testid="buy">Buy now</button>
+    <button type="button" class="a">One</button>
+    <button type="button" class="a">Two</button>
+    <a href="#top">A link</a>
+  </section>
+
+  <section>
+    <h2>Form</h2>
+    <form onsubmit="return false">
+      <label for="email">Email</label> <input id="email" type="email" value="jane@example.com">
+      <label for="pw">Password</label> <input id="pw" type="password" value="hunter2">
+      <textarea aria-label="Notes">saved draft</textarea>
+      <select aria-label="Plan"><option>Pro, billed yearly</option></select>
+      <button type="submit">Save</button>
+    </form>
+  </section>
+
+  <section class="private" data-cecil-private>
+    <h2>Private block</h2>
+    <p>Everything in here is excluded: it can't be picked.</p>
+    <button type="button">Secret action</button>
+  </section>
+
+  <section>
+    <h2>Masked and editable</h2>
+    <p>Card number: <span data-cecil-mask>4111 1111 1111 1111</span> (masked: pickable, text left out)</p>
+    <div contenteditable="true">Editable text is never captured.</div>
+  </section>
+
+  <script type="module">
+    import { init } from "/src/index.ts";
+    init({ endpoint: "http://localhost:8787", projectKey: "dev" });
+  </script>
+</body>
+</html>

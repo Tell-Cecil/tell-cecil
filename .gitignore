@@ -1,0 +1,8 @@
+.DS_Store
+.env
+.env.*
+.idea/
+*.tsbuildinfo
+demo/
+dist/
+node_modules/
