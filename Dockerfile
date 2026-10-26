@@ -11,5 +11,5 @@ COPY --from=build /app/dist ./dist
 ENV PORT=8787
 EXPOSE 8787
 USER node
-# Set CECIL_GITHUB_TOKEN, CECIL_GITHUB_REPO, CECIL_PROJECT_KEY and CECIL_ORIGINS at run time.
+# Set CECIL_PROJECT_KEY, CECIL_ORIGINS and one tracker's variables (GitHub, GitLab or Jira; see README) at run time.
 CMD ["node", "dist/server.mjs"]

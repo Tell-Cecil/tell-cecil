@@ -1,5 +1,6 @@
 // Node runner for the relay. On Workers or other platforms, call createRelay() from your own entry point.
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { projectFromEnv } from "./env";
 import { createRelay, MAX_REQUEST_BYTES } from "./relay";
 
 // Read ./.env when present (Node 20.12+), so `npx tell-cecil` works from a folder holding one. Real env vars win.
@@ -7,27 +8,18 @@ try {
   process.loadEnvFile?.();
 } catch {}
 
-const { CECIL_GITHUB_TOKEN, CECIL_GITHUB_REPO, CECIL_PROJECT_KEY = "dev", CECIL_LABELS, PORT = "8787" } = process.env;
-const list = (v: string) => v.split(",").map((x) => x.trim()).filter(Boolean);
-const origins = list(process.env.CECIL_ORIGINS ?? "http://localhost:5173");
+const { CECIL_PROJECT_KEY = "dev", PORT = "8787" } = process.env;
+const project = projectFromEnv(process.env);
+const origins = project.origins;
 
-if (!CECIL_GITHUB_TOKEN || !CECIL_GITHUB_REPO) {
-  console.error("Set CECIL_GITHUB_TOKEN and CECIL_GITHUB_REPO (owner/repo). See README.");
+let relay: ReturnType<typeof createRelay>;
+try {
+  relay = createRelay({ projects: { [CECIL_PROJECT_KEY]: project } });
+} catch (err) {
+  const why = (err as Error).message.replace(/^cecil: project "[^"]*": /, "");
+  console.error(`${why[0]!.toUpperCase()}${why.slice(1)}. See the README for the CECIL_ variables.`);
   process.exit(1);
 }
-
-const relay = createRelay({
-  projects: {
-    [CECIL_PROJECT_KEY]: {
-      origins,
-      github: {
-        repo: CECIL_GITHUB_REPO,
-        token: CECIL_GITHUB_TOKEN,
-        labels: CECIL_LABELS ? list(CECIL_LABELS) : undefined,
-      },
-    },
-  },
-});
 
 // Only behind a proxy you control that sets x-forwarded-for; otherwise clients could pick their own rate-limit bucket.
 const trustProxy = process.env.CECIL_TRUST_PROXY === "1";

@@ -1,29 +1,16 @@
+import { projectFromEnv } from "../../src/env";
 import { createRelay } from "../../src/relay";
 
-interface Env {
-  CECIL_GITHUB_TOKEN: string;
-  CECIL_GITHUB_REPO: string;
-  CECIL_PROJECT_KEY: string;
-  /** Comma-separated exact origins, e.g. "https://yoursite.com". */
-  CECIL_ORIGINS: string;
-  CECIL_LABELS?: string;
-}
-
-const list = (v: string) => v.split(",").map((x) => x.trim()).filter(Boolean);
+// The same CECIL_* variables as the Node runner: CECIL_PROJECT_KEY, CECIL_ORIGINS (comma-separated exact origins),
+// CECIL_LABELS, and the variables for one tracker (GitHub, GitLab or Jira; see the README). Put tokens in secrets.
+type Env = Record<string, string | undefined>;
 
 // Built once per isolate so the in-memory rate limit survives between requests.
 let relay: ReturnType<typeof createRelay> | undefined;
 
 export default {
   fetch(req: Request, env: Env): Promise<Response> {
-    relay ??= createRelay({
-      projects: {
-        [env.CECIL_PROJECT_KEY]: {
-          origins: list(env.CECIL_ORIGINS),
-          github: { repo: env.CECIL_GITHUB_REPO, token: env.CECIL_GITHUB_TOKEN, labels: env.CECIL_LABELS ? list(env.CECIL_LABELS) : undefined },
-        },
-      },
-    });
+    relay ??= createRelay({ projects: { [env.CECIL_PROJECT_KEY ?? "dev"]: projectFromEnv(env) } });
     return relay(req);
   },
 };

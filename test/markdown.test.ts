@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { formatBody, formatTitle, MAX_BODY } from "../src/github";
+import { formatBody, formatTitle, MAX_BODY } from "../src/markdown";
 import type { Report } from "../src/types";
 
 const base: Report = {

@@ -44,3 +44,13 @@ export interface Report {
 export type Submit = (report: Report) => Promise<{ url?: string }>;
 
 export const MAX_COMMENT = 4000;
+
+/** Files reports in one issue tracker. Relay side only. */
+export interface Tracker {
+  /** For logs, e.g. "GitHub". */
+  name: string;
+  /** POST the report as a new issue. Returns the raw response for the relay to interpret; success is 201. */
+  file(report: Report, doFetch: typeof fetch, timeoutMs: number): Promise<Response>;
+  /** What the page may learn about the issue, from the tracker's 201 reply. */
+  issue(reply: unknown): { url?: string; number?: number; key?: string };
+}

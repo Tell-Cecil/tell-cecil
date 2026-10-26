@@ -1,13 +1,18 @@
-import { createGitHubIssue, type GitHubTarget } from "./github";
-import { MAX_COMMENT, type ElementInfo, type Rect, type Report } from "./types";
+import { githubTracker, type GitHubTarget } from "./github";
+import { gitlabTracker, type GitLabTarget } from "./gitlab";
+import { jiraTracker, type JiraTarget } from "./jira";
+import { MAX_COMMENT, type ElementInfo, type Rect, type Report, type Tracker } from "./types";
 
-export type { GitHubTarget };
+export type { GitHubTarget, GitLabTarget, JiraTarget };
 
 export interface Project {
   /** Exact origins allowed to submit, e.g. "https://example.com". */
   origins: string[];
-  github: GitHubTarget;
-  /** Return the created issue's URL and number to the page. Default true; false keeps the repo name from reaching browsers. */
+  /** Where reports go: exactly one of github, gitlab or jira. */
+  github?: GitHubTarget;
+  gitlab?: GitLabTarget;
+  jira?: JiraTarget;
+  /** Return the created issue's URL and number (Jira: key) to the page. Default true; false keeps the repo or project from reaching browsers. */
   exposeIssueUrl?: boolean;
 }
 
@@ -21,7 +26,7 @@ export interface RelayOptions {
   now?: () => number;
   /** Test only: the rate-limit store, so tests can inspect pruning. */
   hits?: Map<string, number[]>;
-  /** Test only: shortens the 10 second limit on the GitHub call. */
+  /** Test only: shortens the 10 second limit on the tracker call. */
   upstreamTimeoutMs?: number;
   /** Identifies the client for rate limiting. Default: cf-connecting-ip, else the last x-forwarded-for entry. */
   clientIp?: (req: Request) => string;
@@ -50,13 +55,6 @@ async function readBody(req: Request, max: number): Promise<string | null> {
   }
 }
 
-// Zero-width spaces stop reporters from pinging GitHub users or linking other repos' issues. Only the comment is free markdown;
-// everything else is rendered in a code span, where GitHub links nothing, so it is kept byte-exact.
-const noPing = (s: string) =>
-  s
-    .replace(/(?<!\w)@(?=[\w-])/g, "@\u200b")
-    .replace(/([\w.-]+\/[\w.-]+)#(\d)/g, "$1#\u200b$2")
-    .replace(/\bGH-(\d)/gi, "GH-\u200b$1");
 const opt = (v: unknown, max: number) => (typeof v === "string" ? v.slice(0, max) : undefined);
 const strings = (v: unknown, n: number) =>
   Array.isArray(v) ? v.filter((x): x is string => typeof x === "string").slice(0, n).map((x) => x.slice(0, MAX_FIELD)) : [];
@@ -128,7 +126,7 @@ function parseReport(x: unknown, origin: string, now: number): Report | null {
   const area = r.area === undefined ? undefined : parseRect(r.area);
   if (element === null || area === null) return null;
   return {
-    comment: noPing(comment),
+    comment,
     url,
     user: opt(r.user, 100),
     element,
@@ -139,12 +137,13 @@ function parseReport(x: unknown, origin: string, now: number): Report | null {
   };
 }
 
-/** Fail at startup, not on the first report, when the config can't work. */
-function validate(projects: Record<string, Project>): void {
+/** Fail at startup, not on the first report, when the config can't work. Returns each project's tracker. */
+function validate(projects: Record<string, Project>): Map<string, Tracker> {
   const keys = Object.keys(projects);
   if (!keys.length) throw new Error("cecil: no projects configured");
+  const trackers = new Map<string, Tracker>();
   for (const key of keys) {
-    const { origins, github } = projects[key]!;
+    const { origins, github, gitlab, jira } = projects[key]!;
     for (const o of origins) {
       let canonical: string | undefined;
       try {
@@ -154,9 +153,15 @@ function validate(projects: Record<string, Project>): void {
       }
       if (canonical !== o) throw new Error(`cecil: project "${key}": origin "${o}" must be exactly an origin like "https://example.com"${canonical ? ` (try "${canonical}")` : ""}`);
     }
-    if (!/^[\w.-]+\/[\w.-]+$/.test(github.repo)) throw new Error(`cecil: project "${key}": repo "${github.repo}" must look like "owner/repo"`);
-    if (!github.token) throw new Error(`cecil: project "${key}": GitHub token is empty`);
+    const make = [github && (() => githubTracker(github)), gitlab && (() => gitlabTracker(gitlab)), jira && (() => jiraTracker(jira))].filter((m) => !!m);
+    if (make.length !== 1) throw new Error(`cecil: project "${key}": set exactly one of github, gitlab or jira`);
+    try {
+      trackers.set(key, make[0]!());
+    } catch (err) {
+      throw new Error(`cecil: project "${key}": ${(err as Error).message}`);
+    }
   }
+  return trackers;
 }
 
 /**
@@ -164,7 +169,7 @@ function validate(projects: Record<string, Project>): void {
  * Workers, Vercel/Deno/Bun, or Node via src/server.ts.
  */
 export function createRelay(opts: RelayOptions): (req: Request) => Promise<Response> {
-  validate(opts.projects);
+  const trackers = validate(opts.projects);
   const doFetch = opts.fetch ?? fetch;
   const now = opts.now ?? Date.now;
   const limit = opts.rateLimit ?? { max: 10, windowMs: 60_000 };
@@ -246,28 +251,29 @@ export function createRelay(opts: RelayOptions): (req: Request) => Promise<Respo
     const report = parseReport(payload.report, origin, now());
     if (!report) return reply(400, { error: "bad_report" }, origin, true);
 
+    const tracker = trackers.get(key)!;
     let res: Response;
     try {
-      res = await createGitHubIssue(project.github, report, doFetch, opts.upstreamTimeoutMs);
+      res = await tracker.file(report, doFetch, opts.upstreamTimeoutMs ?? 10_000);
     } catch (err) {
       const timedOut = err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError");
-      if (timedOut) console.error("cecil-relay: GitHub did not respond in time");
+      if (timedOut) console.error(`cecil-relay: ${tracker.name} did not respond in time`);
       return reply(timedOut ? 504 : 502, { error: timedOut ? "upstream_timeout" : "upstream_error" }, origin, true);
     }
     if (res.status !== 201) {
       // Upstream detail can contain repo/permission info; log server-side, not to the browser.
       const detail = await res.text().catch(() => "");
-      console.error(`cecil-relay: GitHub responded ${res.status}: ${detail.slice(0, 500)}`);
+      console.error(`cecil-relay: ${tracker.name} responded ${res.status}: ${detail.slice(0, 500)}`);
       return reply(502, { error: "upstream_error" }, origin, true);
     }
     // The issue exists by now, so an unreadable reply must not look like a failure.
-    let issue: { html_url?: string; number?: number } = {};
+    let issue = {};
     try {
-      issue = await res.json();
+      issue = tracker.issue(await res.json());
     } catch (err) {
-      console.error("cecil-relay: could not read GitHub's reply", err);
+      console.error(`cecil-relay: could not read ${tracker.name}'s reply`, err);
     }
-    return reply(201, project.exposeIssueUrl === false ? {} : { url: issue.html_url, number: issue.number }, origin, true);
+    return reply(201, project.exposeIssueUrl === false ? {} : issue, origin, true);
   }
 
   return async (req) => {

@@ -4,24 +4,30 @@
 
 <p align="center"><a href="https://www.npmjs.com/package/tell-cecil"><img src="https://img.shields.io/npm/v/tell-cecil" alt="npm"></a></p>
 
-Feedback widget for any website. Visitors pick an element, write a comment, and it lands as a GitHub issue with the selector and page context. No dependencies, about 8 KB gzipped, MIT.
+Feedback widget for any website. Visitors pick an element, write a comment, and it lands as an issue in GitHub, GitLab or Jira with the selector and page context. No dependencies, about 8 KB gzipped, MIT.
 
-> **Alpha.** GitHub only; no screenshots or area selection yet.
+> **Alpha.** No screenshots or area selection yet.
 
 ![A visitor picks the "Start free trail" button, notes the typo, and it lands as a GitHub issue](docs/demo.gif)
 
 ## How it works
 
-Visitors click **Feedback**, pick an **Element** (mouse, or Tab and Enter) or the whole **Page**, write a comment and send. The widget posts the report to a small relay you run, which files the issue with your GitHub token. Reporters need no GitHub account, and the token never reaches the page.
+Visitors click **Feedback**, pick an **Element** (mouse, or Tab and Enter) or the whole **Page**, write a comment and send. The widget posts the report to a small relay you run, which files the issue with your token. Reporters need no account, and the token never reaches the page.
 
-> **Public repo means public reports.** Use a private repo unless anyone may read the comments and page paths.
+> **A public repo or project means public reports.** Use a private one unless anyone may read the comments and page paths.
 
 ## Quick start
 
-**1. Run the relay** (Node 20+) with a [fine-grained token](https://github.com/settings/personal-access-tokens/new) for one repo, Issues: read and write.
+**1. Run the relay** (Node 20+) with the variables for one tracker:
+
+| Tracker | Variables | Token |
+| --- | --- | --- |
+| GitHub | `CECIL_GITHUB_TOKEN`, `CECIL_GITHUB_REPO=owner/repo` | [Fine-grained token](https://github.com/settings/personal-access-tokens/new) for one repo, Issues: read and write |
+| GitLab | `CECIL_GITLAB_TOKEN`, `CECIL_GITLAB_PROJECT=group/project`, plus `CECIL_GITLAB_URL` when self-hosted | Personal or project access token, `api` scope |
+| Jira Cloud | `CECIL_JIRA_URL=https://acme.atlassian.net`, `CECIL_JIRA_EMAIL`, `CECIL_JIRA_TOKEN`, `CECIL_JIRA_PROJECT=WEB`, optional `CECIL_JIRA_ISSUE_TYPE` (default `Task`) | [API token](https://id.atlassian.com/manage-profile/security/api-tokens) of an account that can create issues |
 
 ```sh
-export CECIL_GITHUB_TOKEN=github_pat_...
+export CECIL_GITHUB_TOKEN=github_pat_...    # or the GitLab or Jira variables
 export CECIL_GITHUB_REPO=owner/repo
 export CECIL_PROJECT_KEY=pk_abc             # public, not a secret
 export CECIL_ORIGINS=https://yoursite.com   # exact origins, comma-separated
@@ -33,7 +39,7 @@ Optional: `CECIL_LABELS`, `PORT`, and `CECIL_TRUST_PROXY=1` behind your own reve
 **2. Add the widget.**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/tell-cecil@0.0.2/dist/cecil.js"
+<script src="https://cdn.jsdelivr.net/npm/tell-cecil@0.0.3/dist/cecil.js"
   data-endpoint="https://relay.example.com"
   data-project-key="pk_abc"></script>
 ```
@@ -73,10 +79,16 @@ Tell Cecil never reads input values, editable content or page HTML. It sends the
 
 | Option | Default | |
 | --- | --- | --- |
-| `projects` | required | Key to `{ origins, github: { repo, token, labels? }, exposeIssueUrl? }`. `exposeIssueUrl: false` hides the issue link from reporters. |
+| `projects` | required | Key to `{ origins, github \| gitlab \| jira, exposeIssueUrl? }`, exactly one tracker each. `exposeIssueUrl: false` hides the issue link from reporters. |
 | `rateLimit` | `{ max: 10, projectMax: 60, windowMs: 60000 }` | Per IP and per project. |
 | `clientIp` | `cf-connecting-ip`, else last `x-forwarded-for` | Client identity for rate limiting. |
 | `fetch`, `now` | globals | For tests. |
+
+| Tracker | Shape |
+| --- | --- |
+| `github` | `{ repo: "owner/repo", token, labels? }` |
+| `gitlab` | `{ project: "group/project" or ID, token, labels?, url? }`, `url` defaults to `https://gitlab.com` |
+| `jira` | `{ url, email, token, project: "WEB", issueType?, labels? }`, Jira Cloud; labels can't contain spaces |
 
 ## Develop
 

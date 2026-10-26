@@ -6,6 +6,8 @@ compatibility_date = "2026-10-01"
 CECIL_GITHUB_REPO = "owner/repo"
 CECIL_PROJECT_KEY = "pk_abc"
 CECIL_ORIGINS = "https://yoursite.com"
+# GitLab instead: CECIL_GITLAB_PROJECT = "group/project" (and CECIL_GITLAB_URL when self-hosted).
+# Jira instead: CECIL_JIRA_URL = "https://acme.atlassian.net", CECIL_JIRA_EMAIL, CECIL_JIRA_PROJECT = "WEB".
 
 # The token is a secret, not a var:
-#   npx wrangler secret put CECIL_GITHUB_TOKEN
+#   npx wrangler secret put CECIL_GITHUB_TOKEN   (or CECIL_GITLAB_TOKEN, CECIL_JIRA_TOKEN)

@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.0.3] - 2026-10-26
+
+Relay only: the widget is unchanged from 0.0.2.
+
+### Added
+- GitLab and Jira Cloud as issue trackers, next to GitHub. A relay project takes exactly one of `github`, `gitlab` or `jira`; the Node runner and the Worker example read `CECIL_GITLAB_*` or `CECIL_JIRA_*` variables. GitLab works with self-hosted instances. Jira issues use Atlassian Document Format, so reporters can't inject markup or mentions.
+
+### Changed
+- Mention and reference neutralising moved from the relay's input parsing into each tracker, so the GitLab one also covers `@all`, merge requests, labels and milestones.
+- The issue title is cut at the first line break of any kind, not only `\n`.
+
 ## [0.0.2] - 2026-10-25
 
 ### Changed
