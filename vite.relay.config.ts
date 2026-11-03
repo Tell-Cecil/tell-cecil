@@ -8,14 +8,14 @@ export default defineConfig({
     emptyOutDir: false,
     minify: false,
     lib: {
-      entry: { relay: "src/relay.ts", server: "src/server.ts" },
+      entry: { relay: "src/relay.ts", server: "src/cli.ts" },
       formats: ["es"],
       fileName: (_format, name) => `${name}.mjs`,
     },
     rollupOptions: {
       external: [...builtinModules, /^node:/],
       // server.mjs is the package's `tell-cecil` bin, so npx can run it directly.
-      output: { banner: (chunk) => (chunk.name === "server" ? "#!/usr/bin/env node" : "") },
+      output: { chunkFileNames: "chunks/[name]-[hash].mjs", banner: (chunk) => (chunk.name === "server" ? "#!/usr/bin/env node" : "") },
     },
   },
 });

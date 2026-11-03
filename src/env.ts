@@ -6,8 +6,9 @@ export const list = (v: string) => v.split(",").map((x) => x.trim()).filter(Bool
 export function projectFromEnv(env: Record<string, string | undefined>): Project {
   const labels = env.CECIL_LABELS ? list(env.CECIL_LABELS) : undefined;
   const project: Project = { origins: list(env.CECIL_ORIGINS ?? "http://localhost:5173") };
-  if (env.CECIL_GITHUB_TOKEN || env.CECIL_GITHUB_REPO) {
-    project.github = { repo: env.CECIL_GITHUB_REPO ?? "", token: env.CECIL_GITHUB_TOKEN ?? "", labels };
+  if (env.CECIL_GITHUB_TOKEN || env.CECIL_GITHUB_REPO || env.CECIL_GITHUB_APP_ID) {
+    const app = env.CECIL_GITHUB_APP_ID || env.CECIL_GITHUB_APP_KEY ? { id: env.CECIL_GITHUB_APP_ID ?? "", key: env.CECIL_GITHUB_APP_KEY ?? "" } : undefined;
+    project.github = { repo: env.CECIL_GITHUB_REPO ?? "", token: app && !env.CECIL_GITHUB_TOKEN ? undefined : (env.CECIL_GITHUB_TOKEN ?? ""), app, labels };
   }
   if (env.CECIL_GITLAB_TOKEN || env.CECIL_GITLAB_PROJECT) {
     project.gitlab = { project: env.CECIL_GITLAB_PROJECT ?? "", token: env.CECIL_GITLAB_TOKEN ?? "", url: env.CECIL_GITLAB_URL || undefined, labels };

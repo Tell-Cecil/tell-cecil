@@ -18,28 +18,49 @@ Visitors click **Feedback**, pick an **Element** (mouse, or Tab and Enter) or th
 
 ## Quick start
 
-**1. Run the relay** (Node 20+) with the variables for one tracker:
+**With a coding agent.** Paste this into Claude Code, Cursor or another agent in your site's folder:
 
-| Tracker | Variables | Token |
+```text
+Fetch and execute the instructions to set me up for Tell Cecil from https://raw.githubusercontent.com/Tell-Cecil/tell-cecil/main/prompt.md
+```
+
+It runs the steps below and adds the widget to your pages. You only click through the browser.
+
+**1. Connect your tracker and run the relay** (Node 20+), in your site's folder:
+
+```sh
+npx tell-cecil init    # connect GitHub, GitLab or Jira in the browser, writes .env
+npx tell-cecil check   # optional: asks the tracker, read-only, whether issues can be filed
+npx tell-cecil         # the relay, on http://localhost:8787
+```
+
+`init` reads the repo from the git remote (`--help` for options, including Jira). On GitHub it creates a small GitHub App for the repo that can only read and write issues: two clicks, issues come from a bot, and nothing expires. On GitLab and Jira it opens the token page pre-filled and you paste the token into the setup page. Secrets go straight to `.env`, which it adds to `.gitignore`.
+
+<details><summary>Or set the variables yourself</summary>
+
+| Tracker | Variables | Credentials |
 | --- | --- | --- |
 | GitHub | `CECIL_GITHUB_TOKEN`, `CECIL_GITHUB_REPO=owner/repo` | [Fine-grained token](https://github.com/settings/personal-access-tokens/new) for one repo, Issues: read and write |
+| GitHub App | `CECIL_GITHUB_APP_ID`, `CECIL_GITHUB_APP_KEY`, `CECIL_GITHUB_REPO=owner/repo` | App with Issues: read and write, installed on the repo. The key is the app's private key PEM, or that PEM base64-encoded on one line |
 | GitLab | `CECIL_GITLAB_TOKEN`, `CECIL_GITLAB_PROJECT=group/project`, plus `CECIL_GITLAB_URL` when self-hosted | Personal or project access token, `api` scope |
 | Jira Cloud | `CECIL_JIRA_URL=https://acme.atlassian.net`, `CECIL_JIRA_EMAIL`, `CECIL_JIRA_TOKEN`, `CECIL_JIRA_PROJECT=WEB`, optional `CECIL_JIRA_ISSUE_TYPE` (default `Task`) | [API token](https://id.atlassian.com/manage-profile/security/api-tokens) of an account that can create issues |
 
 ```sh
-export CECIL_GITHUB_TOKEN=github_pat_...    # or the GitLab or Jira variables
+export CECIL_GITHUB_TOKEN=github_pat_...    # or the GitHub App, GitLab or Jira variables
 export CECIL_GITHUB_REPO=owner/repo
 export CECIL_PROJECT_KEY=pk_abc             # public, not a secret
 export CECIL_ORIGINS=https://yoursite.com   # exact origins, comma-separated
 npx tell-cecil                              # http://localhost:8787
 ```
 
-Optional: `CECIL_LABELS`, `PORT`, and `CECIL_TRUST_PROXY=1` behind your own reverse proxy. The variables can also live in a `.env` file in the current folder.
+</details>
+
+Optional: `CECIL_LABELS`, `PORT`, and `CECIL_TRUST_PROXY=1` behind your own reverse proxy. The variables can also come from the environment instead of `.env`.
 
 **2. Add the widget.**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/tell-cecil@0.0.3/dist/cecil.js"
+<script src="https://cdn.jsdelivr.net/npm/tell-cecil@0.0.4/dist/cecil.js"
   data-endpoint="https://relay.example.com"
   data-project-key="pk_abc"></script>
 ```
@@ -86,7 +107,7 @@ Tell Cecil never reads input values, editable content or page HTML. It sends the
 
 | Tracker | Shape |
 | --- | --- |
-| `github` | `{ repo: "owner/repo", token, labels? }` |
+| `github` | `{ repo: "owner/repo", token, labels? }`, or `app: { id, key }` instead of `token` to file as a GitHub App |
 | `gitlab` | `{ project: "group/project" or ID, token, labels?, url? }`, `url` defaults to `https://gitlab.com` |
 | `jira` | `{ url, email, token, project: "WEB", issueType?, labels? }`, Jira Cloud; labels can't contain spaces |
 

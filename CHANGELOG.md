@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+Relay and CLI only: the widget is unchanged from 0.0.2.
+
+### Added
+- `npx tell-cecil init` connects GitHub, GitLab or Jira from a local setup page and writes `.env` (and adds it to `.gitignore`). It reads the repo from the git remote and guesses the dev server origin. On GitHub it creates a GitHub App for the repo with issues-only permissions; `--token` uses a fine-grained token instead. Tokens are pasted into the page, never into the terminal.
+- `npx tell-cecil check` validates `.env` and asks the tracker, read-only, whether issues can be filed.
+- GitHub App auth in the relay: `github: { repo, app: { id, key } }`, or `CECIL_GITHUB_APP_ID` and `CECIL_GITHUB_APP_KEY`. It mints installation tokens limited to the repo and to issues, cached until shortly before they expire. Uses WebCrypto only, so it runs on Workers too.
+- `prompt.md`: setup instructions for coding agents, for the copy-paste prompt in the README.
+
+### Changed
+- The relay logs why a tracker call failed (`cecil-relay: GitHub: ...`), not only the 502.
+
 ## [0.0.3] - 2026-10-26
 
 Relay only: the widget is unchanged from 0.0.2.

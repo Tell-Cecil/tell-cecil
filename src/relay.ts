@@ -1,9 +1,9 @@
-import { githubTracker, type GitHubTarget } from "./github";
+import { githubTracker, type GitHubApp, type GitHubTarget } from "./github";
 import { gitlabTracker, type GitLabTarget } from "./gitlab";
 import { jiraTracker, type JiraTarget } from "./jira";
 import { MAX_COMMENT, type ElementInfo, type Rect, type Report, type Tracker } from "./types";
 
-export type { GitHubTarget, GitLabTarget, JiraTarget };
+export type { GitHubApp, GitHubTarget, GitLabTarget, JiraTarget };
 
 export interface Project {
   /** Exact origins allowed to submit, e.g. "https://example.com". */
@@ -257,7 +257,7 @@ export function createRelay(opts: RelayOptions): (req: Request) => Promise<Respo
       res = await tracker.file(report, doFetch, opts.upstreamTimeoutMs ?? 10_000);
     } catch (err) {
       const timedOut = err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError");
-      if (timedOut) console.error(`cecil-relay: ${tracker.name} did not respond in time`);
+      console.error(timedOut ? `cecil-relay: ${tracker.name} did not respond in time` : `cecil-relay: ${tracker.name}: ${(err as Error).message}`);
       return reply(timedOut ? 504 : 502, { error: timedOut ? "upstream_timeout" : "upstream_error" }, origin, true);
     }
     if (res.status !== 201) {
