@@ -1,6 +1,6 @@
 {
   "name": "tell-cecil",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Embeddable feedback widget that files issues in GitHub, GitLab or Jira.",
   "license": "MIT",
   "repository": {
