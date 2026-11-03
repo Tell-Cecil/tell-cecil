@@ -26,10 +26,10 @@ npx -y tell-cecil@latest init
 It reads the GitHub or GitLab repo from the git remote `origin`. Pass options when that is wrong or missing:
 
 - Another repo: `--tracker github --repo owner/repo` (or `--tracker gitlab --repo group/project`, plus `--url https://gitlab.example.com` when self-hosted).
-- Jira Cloud: `--tracker jira --url https://acme.atlassian.net --project KEY --email user@example.com`. Ask the user for the site, project key and email; they are not secrets.
+- Jira Cloud: `--tracker jira`. The user fills in the site, project key, email and API token on the setup page. Add `--url https://acme.atlassian.net` or `--project KEY` only when the project already states them; don't guess.
 - The site's origin, when it isn't the framework's default dev server: `--origin http://localhost:3000`. Repeat for each origin, including production, e.g. `--origin https://example.com`.
 
-`init` prints a link and tries to open it. Read the link from its output and tell the user right away, in one line, with the link itself: "Finish in your browser: <link>". Then wait for `init` to exit. On GitHub they click **Create GitHub App**, then **Install**; on GitLab and Jira they create a token on a pre-filled page and paste it into the setup page (not into this chat).
+`init` prints a link and tries to open it. Read the link from its output and tell the user right away, in one line, with the link itself: "Finish in your browser: <link>". Then wait for `init` to exit. On GitHub they click **Create GitHub App**, then **Install**; on GitLab they create a token on a pre-filled page and paste it into the setup page; on Jira they fill in the setup page form. Tokens never go into this chat.
 
 When it exits, read its output:
 

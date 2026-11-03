@@ -20,7 +20,6 @@ GitHub and GitLab are read from the git remote "origin" when you don't pass them
   --repo <owner/repo>      GitHub repo or GitLab project path
   --url <url>              Self-hosted GitLab, or your Jira site (https://acme.atlassian.net)
   --project <KEY>          Jira project key
-  --email <email>          Jira account email
   --origin <url>           Site origin allowed to send reports. Repeat for more. Default: your dev server
   --key <pk_...>           Project key for the widget. Default: pk_<repo name>
   --token                  GitHub: paste a fine-grained token instead of creating a GitHub App
@@ -117,7 +116,6 @@ export async function init(argv: string[]): Promise<number> {
       repo: { type: "string" },
       url: { type: "string" },
       project: { type: "string" },
-      email: { type: "string" },
       origin: { type: "string", multiple: true },
       key: { type: "string" },
       token: { type: "boolean" },
@@ -275,7 +273,7 @@ ${useApp ? `<p class="muted" style="margin-top:18px"><a href="${at("/")}">Back t
 <form method="post" action="${at("/token")}">
 <label for="u">Jira site</label><input id="u" name="url" required value="${v("url", a.url ?? "")}" placeholder="https://acme.atlassian.net">
 <label for="p">Project key</label><input id="p" name="project" required value="${v("project", a.project ?? "")}" placeholder="WEB">
-<label for="e">Account email</label><input id="e" name="email" type="email" required value="${v("email", a.email ?? "")}">
+<label for="e">Account email</label><input id="e" name="email" type="email" required value="${v("email")}">
 <label for="t">API token</label><input id="t" name="token" type="password" autocomplete="off" required>
 <label for="i">Issue type</label><input id="i" name="issueType" value="${v("issueType", "Task")}">
 <button>Connect</button></form>`,
@@ -301,6 +299,7 @@ ${useApp ? `<p class="muted" style="margin-top:18px"><a href="${at("/")}">Back t
       if (issueType !== "Task") vars.CECIL_JIRA_ISSUE_TYPE = issueType;
     }
     if (!token) throw new Error("Paste the token first.");
+    if (tracker === "jira" && !(f.get("email") ?? "").trim()) throw new Error("Enter the account email.");
     const where = await check(target);
     writeEnv(vars);
     finish({ vars, where });
@@ -329,7 +328,7 @@ ${useApp ? `<p class="muted" style="margin-top:18px"><a href="${at("/")}">Back t
 
   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
     const send = (status: number, html: string, headers: Record<string, string> = {}) => {
-      res.writeHead(status, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "referrer-policy": "no-referrer", ...headers });
+      res.writeHead(status, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "referrer-policy": "same-origin", ...headers });
       res.end(html);
     };
     // Only this page's own origin, so other sites and DNS rebinding can't drive it.

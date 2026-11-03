@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Fixed
+- `init`: the token form (GitLab, Jira and the GitHub token fallback) was rejected with "Bad origin". The setup page's `no-referrer` policy made browsers send `Origin: null`.
+
+### Changed
+- `init`: the Jira form starts empty except for the fields passed as flags, and `--email` is gone: the person enters their email with the token. The email is required.
+
 ## [0.0.4] - 2026-11-03
 
 Relay and CLI only: the widget is unchanged from 0.0.2.
