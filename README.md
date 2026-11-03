@@ -62,7 +62,7 @@ Optional: `CECIL_LABELS`, `PORT`, and `CECIL_TRUST_PROXY=1` behind your own reve
 **2. Add the widget.**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/tell-cecil@0.0.4/dist/cecil.js"
+<script src="https://cdn.jsdelivr.net/npm/tell-cecil@0.0.5/dist/cecil.js"
   data-endpoint="https://relay.example.com"
   data-project-key="pk_abc"></script>
 ```

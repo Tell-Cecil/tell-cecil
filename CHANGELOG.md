@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.0.5] - 2026-11-03
 
 ### Fixed
 - `init`: the token form (GitLab, Jira and the GitHub token fallback) was rejected with "Bad origin". The setup page's `no-referrer` policy made browsers send `Origin: null`.
