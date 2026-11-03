@@ -18,7 +18,7 @@ Visitors click **Feedback**, pick an **Element** (mouse, or Tab and Enter) or th
 
 ## Quick start
 
-**With a coding agent.** Paste this into Claude Code, Cursor or another agent in your site's folder:
+**With a coding agent.** Open Claude Code, Cursor or another agent in the folder of the site that should get the Feedback button, and paste this:
 
 ```text
 Fetch and execute the instructions to set me up for Tell Cecil from https://raw.githubusercontent.com/Tell-Cecil/tell-cecil/main/prompt.md
@@ -34,7 +34,7 @@ npx tell-cecil check   # optional: asks the tracker, read-only, whether issues c
 npx tell-cecil         # the relay, on http://localhost:8787
 ```
 
-`init` reads the repo from the git remote (`--help` for options, including Jira). On GitHub it creates a small GitHub App for the repo that can only read and write issues: two clicks, issues come from a bot, and nothing expires. On GitLab and Jira it opens the token page pre-filled and you paste the token into the setup page. Secrets go straight to `.env`, which it adds to `.gitignore`.
+Run it in the site's folder: `init` reads the repo from that folder's git remote and writes `.env` there, next to the site, for the relay to read. If issues should go to another repo, pass `--repo owner/repo` (`--help` for all options, including Jira). On GitHub it creates a small GitHub App for the repo that can only read and write issues: two clicks, issues come from a bot, and nothing expires. On GitLab and Jira it opens the token page pre-filled and you paste the token into the setup page. Secrets go straight to `.env`, which it adds to `.gitignore`.
 
 <details><summary>Or set the variables yourself</summary>
 
