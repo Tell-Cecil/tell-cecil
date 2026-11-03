@@ -24,7 +24,7 @@ Open Claude Code, Cursor or another coding agent in your site's folder and paste
 Fetch and execute the instructions to set me up for Tell Cecil from https://raw.githubusercontent.com/Tell-Cecil/tell-cecil/main/prompt.md
 ```
 
-It connects GitHub, GitLab or Jira (you click through the browser) and adds the Feedback button to your pages.
+It connects your tracker in the browser (two clicks on GitHub; on GitLab and Jira you paste a token into the setup page, never into the chat) and adds the Feedback button to your pages.
 
 <details><summary>Set it up by hand</summary>
 
