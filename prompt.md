@@ -54,6 +54,7 @@ Where it goes:
 - Next.js App Router: in `app/layout.tsx`, `<Script src="…" data-endpoint="…" data-project-key="…" strategy="afterInteractive" />` from `next/script` inside `<body>`. Pages Router: the same in `pages/_document.tsx` or `_app.tsx`.
 - SvelteKit: before `</body>` in `src/app.html`.
 - Bundled apps that prefer npm: `npm i tell-cecil`, then call `init({ endpoint, projectKey })` from `tell-cecil` once on the client.
+- Anything else: find the layout or template that wraps every page and add the tag before `</body>` there. If there are several or you're not sure, ask the user which one.
 
 Put the endpoint and key in the project's own config if it has a pattern for public values (e.g. `VITE_` or `NEXT_PUBLIC_` variables), so production can point at the deployed relay.
 
