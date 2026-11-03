@@ -18,13 +18,15 @@ Visitors click **Feedback**, pick an **Element** (mouse, or Tab and Enter) or th
 
 ## Quick start
 
-**With a coding agent.** Open Claude Code, Cursor or another agent in the folder of the site that should get the Feedback button, and paste this:
+Open Claude Code, Cursor or another coding agent in your site's folder and paste:
 
 ```text
 Fetch and execute the instructions to set me up for Tell Cecil from https://raw.githubusercontent.com/Tell-Cecil/tell-cecil/main/prompt.md
 ```
 
-It runs the steps below and adds the widget to your pages. You only click through the browser.
+It connects GitHub, GitLab or Jira (you click through the browser) and adds the Feedback button to your pages.
+
+<details><summary>Set it up by hand</summary>
 
 **1. Connect your tracker and run the relay** (Node 20+), in your site's folder:
 
@@ -70,6 +72,8 @@ Or `npm i tell-cecil`, then `import { init } from "tell-cecil"` and `init({ endp
 **Reports fail?** The browser console says why. A 403 means a wrong project key or an origin missing from `CECIL_ORIGINS`, which must match the address bar exactly: `http://127.0.0.1:5173` is not `http://localhost:5173`.
 
 **Other hosts.** `createRelay` from `tell-cecil/relay` is a `(Request) => Response` function, so it runs in your own server, Cloudflare Workers, Vercel, Deno or Bun. See the [Worker example](examples/cloudflare-worker) and the [Dockerfile](Dockerfile).
+
+</details>
 
 ## Security
 
