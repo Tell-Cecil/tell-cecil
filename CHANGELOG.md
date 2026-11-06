@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed
+- The widget has a new look: an ink Feedback pill with the Cecil pointer mark, a white panel with the mark in a yellow tile, a grey target row, an ink Send button and toast, and a yellow outline with an ink name tag while picking. On phones the panel is a bottom sheet. It uses Archivo and JetBrains Mono when the page has them and loads no fonts itself.
+
 ## [0.0.5] - 2026-11-03
 
 ### Fixed
