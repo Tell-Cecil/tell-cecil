@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect width="96" height="96" rx="22" fill="#21242b"/><g transform="translate(18 18) scale(2.5)" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="7.4" fill="#ffffff" stroke="none"/><circle cx="11.5" cy="10" r="1.15" fill="#21242b" stroke="none"/><path d="M10.5 14h3.5a1.75 1.75 0 0 1-3.5 0z" fill="#21242b" stroke="#21242b" stroke-width="1.2"/><path d="M18.7 10a3 3 0 0 1 0 4"/><path d="M21.7 9a6 6 0 0 1 0 6"/></g></svg>
+<svg width="139" height="139" viewBox="-16 -20 139 139" xmlns="http://www.w3.org/2000/svg">
+<title>Cecil</title>
+<rect x="-16" y="-20" width="139" height="139" rx="28" fill="#FFD500"/>
+<path d="M64.0562 21.5011L71.0562 4.0011M78.5562 30.0011L94.0562 19.0011M82.5562 45.5011L102.556 47.0011" fill="none" stroke="#0A0A0A" stroke-width="10" stroke-linecap="round"/>
+<path d="M22.3285 92.5334C21.8992 93.3662 20.6631 93.2041 20.4628 92.2888L4.02937 17.1644C3.8454 16.3234 4.73938 15.6584 5.49191 16.0765L69.0194 51.3696C69.7875 51.7963 69.6713 52.9352 68.8328 53.198L37.9545 62.8762C37.6996 62.9561 37.4873 63.1347 37.3648 63.3722L22.3285 92.5334Z" fill="#0A0A0A" stroke="#0A0A0A" stroke-width="8"/>
+</svg>
