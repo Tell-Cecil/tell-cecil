@@ -8,7 +8,7 @@ Feedback widget for any website. Visitors pick an element, write a comment, and 
 
 > **Alpha.** No screenshots or area selection yet.
 
-<img width="1440" height="996" alt="demo" src="https://github.com/user-attachments/assets/b6f9b9be-318c-41f3-9da5-51a856b9d565" />
+![A visitor picks a truncated commit message in a deployments table, writes that it gets cut off, and it lands as a GitHub issue](docs/demo.gif)
 
 ## How it works
 
